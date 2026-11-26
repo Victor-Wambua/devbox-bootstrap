@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ShellCheck
+        run: |
+          shellcheck --version
+          make lint
+
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install bats
+        run: npm install --no-audit --no-fund
+      - name: Tests (default bash)
+        run: make test
+      - name: Tests on the system bash (3.2 on macOS)
+        if: runner.os == 'macOS'
+        run: DEVBOX_TEST_BASH=/bin/bash make test
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Generated docs and Brewfiles are up to date
+        run: |
+          npm install --no-audit --no-fund
+          make docs-check
