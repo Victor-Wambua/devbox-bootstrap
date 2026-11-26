@@ -1,0 +1,15 @@
+{
+  "name": "devbox-bootstrap",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Idempotent, auditable macOS developer-machine bootstrap with profiles and a doctor command.",
+  "license": "MIT",
+  "scripts": {
+    "test": "bats --print-output-on-failure tests",
+    "lint": "shellcheck bin/devbox lib/*.sh scripts/*.sh tests/helpers/*.sh tests/helpers/*.bash tests/mocks/*",
+    "docs": "bash scripts/build-docs.sh"
+  },
+  "devDependencies": {
+    "bats": "^1.11.0"
+  }
+}
