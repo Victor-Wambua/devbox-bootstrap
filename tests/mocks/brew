@@ -1,0 +1,88 @@
+#!/bin/bash
+# Mock Homebrew. Installed state lives in $MOCK_STATE/brew.installed as
+# "kind name version [dep]" lines; install appends to it, so apply is idempotent
+# against this mock exactly as it is against the real thing.
+# shellcheck source=lib.sh
+. "$MOCKS_DIR/lib.sh"
+mock_call "brew $*"
+state="$MOCK_STATE/brew.installed"
+touch "$state"
+
+catalog_line() { # kind name
+  grep -E "^$1 $2 " "$MOCK_STATE/brew.catalog" 2>/dev/null | head -1
+}
+
+case ${1:-} in
+  --version) echo "Homebrew 4.4.12" ;;
+  --prefix) echo "$BREW_PREFIX" ;;
+  list)
+    shift
+    kind=formula
+    versions=0
+    for a in "$@"; do
+      case $a in
+        --cask) kind=cask ;;
+        --formula) kind=formula ;;
+        --versions) versions=1 ;;
+      esac
+    done
+    while read -r k n v rest; do
+      [ "$k" = "$kind" ] || continue
+      if [ $versions = 1 ]; then echo "$n $v"; else echo "$n"; fi
+    done <"$state"
+    ;;
+  leaves)
+    while read -r k n v rest; do
+      [ "$k" = formula ] && [ "$rest" != dep ] && echo "$n"
+    done <"$state"
+    ;;
+  install)
+    shift
+    kind=formula
+    name=""
+    for a in "$@"; do
+      case $a in
+        --cask) kind=cask ;;
+        -*) ;;
+        *) name=$a ;;
+      esac
+    done
+    mock_mutation "brew install $kind $name"
+    if grep -qx "$name" "$MOCK_STATE/brew.fail" 2>/dev/null; then
+      echo "Error: $name: mock install failure" >&2
+      exit 1
+    fi
+    line=$(catalog_line "$kind" "$name")
+    ver=1.0.0 bin=$name
+    if [ -n "$line" ]; then
+      # shellcheck disable=SC2086
+      set -- $line
+      ver=$3 bin=${4:-$name}
+    fi
+    echo "==> Installing $name $ver"
+    echo "$kind $name $ver" >>"$state"
+    if [ "$kind" = formula ] || [ -n "$line" ]; then
+      mock_install_tool "$bin" "$ver" "$BREW_PREFIX/bin"
+    fi
+    ;;
+  services)
+    sf="$MOCK_STATE/brew.services"
+    touch "$sf"
+    case ${2:-} in
+      list)
+        printf '%-14s %-9s %-8s %s\n' Name Status User File
+        while read -r n s u f; do
+          printf '%-14s %-9s %-8s %s\n' "$n" "$s" "${u:-}" "${f:-}"
+        done <"$sf"
+        ;;
+      start)
+        mock_mutation "brew services start $3"
+        grep -v "^$3 " "$sf" >"$sf.new"
+        echo "$3 started tester ~/Library/LaunchAgents/homebrew.mxcl.$3.plist" >>"$sf.new"
+        mv "$sf.new" "$sf"
+        ;;
+      *) exit 1 ;;
+    esac
+    ;;
+  *) echo "mock brew: unsupported: $*" >&2; exit 1 ;;
+esac

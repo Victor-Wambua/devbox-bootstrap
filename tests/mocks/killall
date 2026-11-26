@@ -1,0 +1,4 @@
+#!/bin/bash
+# shellcheck source=lib.sh
+. "$MOCKS_DIR/lib.sh"
+mock_mutation "killall $*"

@@ -1,0 +1,43 @@
+#!/bin/bash
+# Mock defaults: a flat-file preferences store under $MOCK_STATE/defaults.
+# shellcheck source=lib.sh
+. "$MOCKS_DIR/lib.sh"
+dir="$MOCK_STATE/defaults"
+cmd=${1:-}
+domain=${2:-}
+key=${3:-}
+file="$dir/${domain}__${key}"
+case $cmd in
+  read)
+    if [ ! -f "$file" ]; then
+      echo "The domain/default pair of ($domain, $key) does not exist" >&2
+      exit 1
+    fi
+    type=$(cut -d' ' -f1 "$file")
+    val=$(cut -d' ' -f2- "$file")
+    if [ "$type" = bool ]; then
+      case $val in true) echo 1 ;; *) echo 0 ;; esac
+    else
+      echo "$val"
+    fi
+    ;;
+  read-type)
+    [ -f "$file" ] || exit 1
+    case $(cut -d' ' -f1 "$file") in
+      bool) echo "Type is boolean" ;;
+      int) echo "Type is integer" ;;
+      float) echo "Type is float" ;;
+      *) echo "Type is string" ;;
+    esac
+    ;;
+  write)
+    mock_mutation "defaults write $domain $key $4 $5"
+    mkdir -p "$dir"
+    printf '%s %s\n' "${4#-}" "$5" >"$file"
+    ;;
+  delete)
+    mock_mutation "defaults delete $domain $key"
+    rm -f "$file"
+    ;;
+  *) exit 1 ;;
+esac

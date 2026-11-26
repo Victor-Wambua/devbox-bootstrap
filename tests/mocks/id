@@ -1,0 +1,6 @@
+#!/bin/bash
+# Mock id: reports the uid in MOCK_UID (default 501, a normal macOS user).
+case "${1:--u}" in
+  -u) echo "${MOCK_UID:-501}" ;;
+  *) echo "uid=${MOCK_UID:-501}(tester)" ;;
+esac

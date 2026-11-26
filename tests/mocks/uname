@@ -1,0 +1,6 @@
+#!/bin/bash
+# Mock uname: pretends to be macOS on arm64.
+case "${1:--s}" in
+  -m) echo arm64 ;;
+  -s | *) echo "${MOCK_OS:-Darwin}" ;;
+esac

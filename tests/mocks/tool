@@ -1,0 +1,160 @@
+#!/bin/bash
+# Universal mock for installed software. Reached through a per-install wrapper named after the tool; the
+# behaviour is picked from that name. Versions come from $MOCK_STATE/versions/<name>.
+# shellcheck source=lib.sh
+. "$MOCKS_DIR/lib.sh"
+self=${MOCK_SELF:-$0}
+name=${self##*/}
+# version lookup is inline (no subprocesses): tools get queried dozens of times per doctor run
+rel=${self%/*}
+rel=${rel#"${SANDBOX:-}"}
+ver=1.0.0
+vfile="$MOCK_STATE/versions/${rel//\//_}__$name"
+[ -r "$vfile" ] && read -r ver <"$vfile"
+
+case $name in
+  code)
+    ext="$MOCK_STATE/code.extensions"
+    touch "$ext"
+    case ${1:-} in
+      --version) printf '%s\nabc123\narm64\n' "$ver" ;;
+      --list-extensions) cat "$ext" ;;
+      --install-extension)
+        mock_mutation "code --install-extension $2"
+        echo "Installing extensions..."
+        echo "$2" >>"$ext"
+        ;;
+    esac
+    exit 0
+    ;;
+  uv)
+    py="$MOCK_STATE/uv.pythons"
+    touch "$py"
+    case ${1:-} in
+      --version) echo "uv $ver (mock)" ;;
+      python)
+        case ${2:-} in
+          list) while read -r v; do echo "cpython-$v-macos-aarch64-none    $HOME/.local/share/uv/python/cpython-$v"; done <"$py" ;;
+          install)
+            mock_mutation "uv python install $3"
+            echo "Installed Python $3.1"
+            echo "$3.1" >>"$py"
+            ;;
+        esac
+        ;;
+    esac
+    exit 0
+    ;;
+  composer)
+    cg="$MOCK_STATE/composer.global"
+    touch "$cg"
+    case ${1:-} in
+      --version) echo "Composer version $ver 2024-11-17 13:13:04" ;;
+      global)
+        case ${2:-} in
+          show) grep -qx "$3" "$cg" || exit 1 ;;
+          require)
+            mock_mutation "composer global require $3"
+            echo "Using version for $3"
+            echo "$3" >>"$cg"
+            if [ "$3" = laravel/valet ]; then
+              mock_install_tool valet 4.6.0 "$HOME/.composer/vendor/bin"
+            fi
+            ;;
+        esac
+        ;;
+    esac
+    exit 0
+    ;;
+  valet)
+    cfg="$HOME/.config/valet"
+    case ${1:-} in
+      --version) echo "Laravel Valet $ver" ;;
+      install)
+        mock_mutation "valet install"
+        echo "Installing dnsmasq and nginx (mock)"
+        mkdir -p "$cfg"
+        echo '{"tld":"test"}' >"$cfg/config.json"
+        sf="$MOCK_STATE/brew.services"
+        touch "$sf"
+        for s in dnsmasq nginx php; do
+          grep -v "^$s " "$sf" >"$sf.new" || true
+          echo "$s started root /Library/LaunchDaemons/homebrew.mxcl.$s.plist" >>"$sf.new"
+          mv "$sf.new" "$sf"
+        done
+        ;;
+      park)
+        mock_mutation "valet park $(pwd)"
+        mkdir -p "$cfg"
+        pwd >>"$cfg/paths"
+        ;;
+      paths)
+        echo "["
+        sed 's/.*/    "&"/' "$cfg/paths" 2>/dev/null || true
+        echo "]"
+        ;;
+    esac
+    exit 0
+    ;;
+  fnm)
+    fl="$MOCK_STATE/fnm.versions"
+    ng="$MOCK_STATE/npm.global"
+    touch "$fl" "$ng"
+    case ${1:-} in
+      --version) echo "fnm $ver" ;;
+      install)
+        mock_mutation "fnm install $2"
+        echo "Installing Node v22.11.0 (mock)"
+        echo "v22.11.0" >>"$fl"
+        ;;
+      list)
+        echo "* system"
+        cat "$fl"
+        ;;
+      exec)
+        shift
+        while [ "${1:-}" != "" ] && [ "${1#--}" != "$1" ]; do shift; done
+        case $* in
+          "npm install -g "*)
+            mock_mutation "fnm exec npm install -g $4"
+            echo "added 1 package (mock)"
+            echo "$4" >>"$ng"
+            # models the shell hook that puts fnm's node bin on PATH
+            mock_install_tool sf 2.68.7 "$BREW_PREFIX/bin"
+            ;;
+          "sf --version")
+            grep -qx "@salesforce/cli" "$ng" || exit 127
+            echo "@salesforce/cli/2.68.7 darwin-arm64 node-v22.11.0"
+            ;;
+          *) exit 127 ;;
+        esac
+        ;;
+    esac
+    exit 0
+    ;;
+  gh)
+    case ${1:-} in
+      --version) echo "gh version $ver (2024-11-20)" ;;
+      auth) [ -f "$MOCK_STATE/gh.auth" ] || { echo "You are not logged into any GitHub hosts." >&2; exit 1; } ;;
+    esac
+    exit 0
+    ;;
+  git)
+    case ${1:-} in
+      --version) echo "git version $ver" ;;
+      config)
+        k=${!#}
+        v=$(grep "^$k=" "$MOCK_STATE/git.config" 2>/dev/null | head -1 | cut -d= -f2-)
+        [ -n "$v" ] || exit 1
+        echo "$v"
+        ;;
+    esac
+    exit 0
+    ;;
+  tmux) case ${1:-} in -V) echo "tmux $ver" ;; esac; exit 0 ;;
+esac
+
+case ${1:-} in
+  --version | -V | -v | version) echo "$name version $ver (devbox test mock)" ;;
+esac
+exit 0

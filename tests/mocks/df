@@ -1,0 +1,5 @@
+#!/bin/bash
+# Mock df -Pk: free space comes from $MOCK_STATE/df.avail_kb.
+avail=$(cat "$MOCK_STATE/df.avail_kb" 2>/dev/null || echo 250000000)
+echo "Filesystem 1024-blocks Used Available Capacity Mounted on"
+echo "/dev/disk3s5 494384795 $((494384795 - avail)) $avail 50% /"
