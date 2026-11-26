@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+# devbox: an idempotent, auditable macOS developer-machine bootstrap.
+#
+# Runs on the bash that ships with macOS (3.2) and on bash 4/5; no re-exec needed.
+# Sourcing this file defines functions only. It runs main when executed directly.
+set -euo pipefail
+
+devbox__root() {
+  local src=${BASH_SOURCE[0]} dir link
+  while [[ -L $src ]]; do
+    dir=$(cd -P "$(dirname "$src")" && pwd)
+    link=$(readlink "$src")
+    [[ $link == /* ]] || link=$dir/$link
+    src=$link
+  done
+  (cd -P "$(dirname "$src")/.." && pwd)
+}
+
+DEVBOX_ROOT=$(devbox__root)
+for devbox__lib in core semver manifest block backup steps plan doctor export cli; do
+  # shellcheck source=/dev/null
+  source "$DEVBOX_ROOT/lib/$devbox__lib.sh"
+done
+unset devbox__lib
+
+if [[ ${BASH_SOURCE[0]} == "$0" ]]; then
+  devbox_main "$@"
+fi
