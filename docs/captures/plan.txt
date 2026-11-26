@@ -1,0 +1,44 @@
+$ devbox plan --profile php-laravel
+devbox 0.1.0 plan · profiles: php-laravel
+resolved 22 steps from: base php-laravel
+
+  + block     homebrew-shellenv      ~/.zprofile: block not present
+      # write managed block "homebrew-shellenv" in ~/.zprofile
+        | if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; elif [ -x /usr/local/bin/brew ]; then eval "$(/usr/local/bin/brew shellenv)"; fi
+  ✓ formula   git                    2.47.1
+  ✓ formula   gh                     2.63.0
+  ✓ formula   jq                     1.7.1
+  ✓ formula   ripgrep                14.1.1
+  + formula   fd                     not installed
+      $ brew install fd
+  + formula   fzf                    not installed
+      $ brew install fzf
+  + formula   bat                    not installed
+      $ brew install bat
+  + formula   shellcheck             not installed
+      $ brew install shellcheck
+  + formula   tmux                   not installed
+      $ brew install tmux
+  + formula   php                    not installed
+      $ brew install php
+  + formula   composer               not installed
+      $ brew install composer
+  + formula   mysql                  not installed
+      $ brew install mysql
+  ✓ tool      sqlite3                3.43.2
+  + block     composer-global-bin    ~/.zshrc: block not present
+      # write managed block "composer-global-bin" in ~/.zshrc
+        | export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"
+  + cmd       valet-composer-require check failed
+      $ composer global require laravel/valet
+  + cmd       valet-install          check failed
+      $ export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"; valet install
+      # prompts for your sudo password
+  + cmd       valet-park             check failed
+      $ export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"; mkdir -p "$HOME/Sites" && cd "$HOME/Sites" && valet park
+  · tool      valet                  not on PATH
+  · service   dnsmasq                not listed
+  · service   nginx                  not listed
+  · service   php                    not listed
+
+Plan: 13 to apply (13 new, 0 to correct), 5 already satisfied, 4 expectations.

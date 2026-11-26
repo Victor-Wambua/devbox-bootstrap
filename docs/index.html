@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>devbox: your laptop setup, written down</title>
+<meta name="description" content="An idempotent, auditable macOS developer-machine bootstrap with profiles for PHP/Laravel and Valet, Python, Node and Salesforce, and a doctor command.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#14213d"/><path d="M9 10.5l6.5 5.5L9 21.5" fill="none" stroke="#fca311" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 22h6" stroke="#e4e9f4" stroke-width="2.6" stroke-linecap="round"/></svg><span>devbox</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="profiles/index.html">Profiles</a>
+      <a href="guide.html">Write your own</a>
+      <a href="https://github.com/Victor-Wambua/devbox-bootstrap">GitHub</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="hero">
+  <div class="wrap">
+    <p class="eyebrow">macOS · bash 3.2+ · MIT</p>
+    <h1>Your laptop setup, written down and checkable.</h1>
+    <p class="lede">devbox is an idempotent bootstrap for developer Macs. <strong>Plan</strong> shows what would change. <strong>Apply</strong> changes only that, and running it again changes nothing. <strong>Doctor</strong> tells you what is missing or has drifted.</p>
+    <div class="cta">
+      <a class="btn primary" href="profiles/index.html">Browse the profiles</a>
+      <a class="btn" href="https://github.com/Victor-Wambua/devbox-bootstrap">View on GitHub</a>
+    </div>
+    <p style="margin:24px 0 0"><span class="label">Try it without touching your machine</span></p>
+    <div class="install" tabindex="0" role="region" aria-label="Try command">git clone https://github.com/Victor-Wambua/devbox-bootstrap &amp;&amp; cd devbox-bootstrap &amp;&amp; scripts/try.sh -- plan --profile php-laravel</div>
+
+    <div class="terminal" id="terminal">
+      <div class="t-bar">
+        <div class="t-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="t-tabs" role="tablist" aria-label="Captured sessions">
+          <button class="t-tab" role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="true" type="button">plan</button>
+          <button class="t-tab" role="tab" id="tab-apply" aria-controls="panel-apply" aria-selected="false" tabindex="-1" type="button">apply, twice</button>
+          <button class="t-tab" role="tab" id="tab-doctor" aria-controls="panel-doctor" aria-selected="false" tabindex="-1" type="button">doctor</button>
+        </div>
+      </div>
+      <div class="t-body" tabindex="0" role="region" aria-label="Terminal output (scrollable)">
+        <div class="t-panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan"><pre>$ devbox plan --profile php-laravel
+<span class="a1">devbox 0.1.0</span> plan · profiles: php-laravel
+<span class="a2">resolved 22 steps from: base php-laravel</span>
+
+  <span class="a36">+</span> <span class="a2">block    </span> homebrew-shellenv      <span class="a2">~/.zprofile: block not present</span>
+      <span class="a2"># write managed block "homebrew-shellenv" in ~/.zprofile</span>
+      <span class="a2">  | if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; elif [ -x /usr/local/bin/brew ]; then eval "$(/usr/local/bin/brew shellenv)"; fi</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> git                    <span class="a2">2.47.1</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> gh                     <span class="a2">2.63.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> jq                     <span class="a2">1.7.1</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> ripgrep                <span class="a2">14.1.1</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> fd                     <span class="a2">not installed</span>
+      <span class="a2">$ brew install fd</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> fzf                    <span class="a2">not installed</span>
+      <span class="a2">$ brew install fzf</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> bat                    <span class="a2">not installed</span>
+      <span class="a2">$ brew install bat</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> shellcheck             <span class="a2">not installed</span>
+      <span class="a2">$ brew install shellcheck</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> tmux                   <span class="a2">not installed</span>
+      <span class="a2">$ brew install tmux</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> php                    <span class="a2">not installed</span>
+      <span class="a2">$ brew install php</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> composer               <span class="a2">not installed</span>
+      <span class="a2">$ brew install composer</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> mysql                  <span class="a2">not installed</span>
+      <span class="a2">$ brew install mysql</span>
+  <span class="a32">✓</span> <span class="a2">tool     </span> sqlite3                <span class="a2">3.43.2</span>
+  <span class="a36">+</span> <span class="a2">block    </span> composer-global-bin    <span class="a2">~/.zshrc: block not present</span>
+      <span class="a2"># write managed block "composer-global-bin" in ~/.zshrc</span>
+      <span class="a2">  | export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"</span>
+  <span class="a36">+</span> <span class="a2">cmd      </span> valet-composer-require <span class="a2">check failed</span>
+      <span class="a2">$ composer global require laravel/valet</span>
+  <span class="a36">+</span> <span class="a2">cmd      </span> valet-install          <span class="a2">check failed</span>
+      <span class="a2">$ export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"; valet install</span>
+      <span class="a2"># prompts for your sudo password</span>
+  <span class="a36">+</span> <span class="a2">cmd      </span> valet-park             <span class="a2">check failed</span>
+      <span class="a2">$ export PATH="$HOME/.composer/vendor/bin:$HOME/.config/composer/vendor/bin:$PATH"; mkdir -p "$HOME/Sites" &amp;&amp; cd "$HOME/Sites" &amp;&amp; valet park</span>
+  <span class="a2">·</span> <span class="a2">tool     </span> valet                  <span class="a2">not on PATH</span>
+  <span class="a2">·</span> <span class="a2">service  </span> dnsmasq                <span class="a2">not listed</span>
+  <span class="a2">·</span> <span class="a2">service  </span> nginx                  <span class="a2">not listed</span>
+  <span class="a2">·</span> <span class="a2">service  </span> php                    <span class="a2">not listed</span>
+
+<span class="a1">Plan:</span> 13 to apply (13 new, 0 to correct), 5 already satisfied, 4 expectations.</pre></div>
+        <div class="t-panel" id="panel-apply" role="tabpanel" aria-labelledby="tab-apply" hidden><pre>$ devbox apply --yes --profile base
+<span class="a1">devbox 0.1.0</span> apply · profiles: base
+<span class="a2">resolved 10 steps from: base</span>
+
+  <span class="a36">+</span> <span class="a2">block    </span> homebrew-shellenv <span class="a2">~/.zprofile: block not present</span>
+      <span class="a2"># write managed block "homebrew-shellenv" in ~/.zprofile</span>
+      <span class="a2">  | if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; elif [ -x /usr/local/bin/brew ]; then eval "$(/usr/local/bin/brew shellenv)"; fi</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> git               <span class="a2">not installed</span>
+      <span class="a2">$ brew install git</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> gh                <span class="a2">not installed</span>
+      <span class="a2">$ brew install gh</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> jq                <span class="a2">not installed</span>
+      <span class="a2">$ brew install jq</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> ripgrep           <span class="a2">not installed</span>
+      <span class="a2">$ brew install ripgrep</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> fd                <span class="a2">not installed</span>
+      <span class="a2">$ brew install fd</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> fzf               <span class="a2">not installed</span>
+      <span class="a2">$ brew install fzf</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> bat               <span class="a2">not installed</span>
+      <span class="a2">$ brew install bat</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> shellcheck        <span class="a2">not installed</span>
+      <span class="a2">$ brew install shellcheck</span>
+  <span class="a36">+</span> <span class="a2">formula  </span> tmux              <span class="a2">not installed</span>
+      <span class="a2">$ brew install tmux</span>
+
+<span class="a1">Plan:</span> 10 to apply (10 new, 0 to correct), 0 already satisfied.
+
+<span class="a2">[1/10]</span> <span class="a1">block homebrew-shellenv</span>
+      <span class="a32">✓</span> done
+
+<span class="a2">[2/10]</span> <span class="a1">formula git</span>
+      ==&gt; Installing git 2.47.1
+      <span class="a32">✓</span> done
+
+<span class="a2">[3/10]</span> <span class="a1">formula gh</span>
+      ==&gt; Installing gh 2.63.0
+      <span class="a32">✓</span> done
+
+<span class="a2">[4/10]</span> <span class="a1">formula jq</span>
+      ==&gt; Installing jq 1.7.1
+      <span class="a32">✓</span> done
+
+<span class="a2">[5/10]</span> <span class="a1">formula ripgrep</span>
+      ==&gt; Installing ripgrep 14.1.1
+      <span class="a32">✓</span> done
+
+<span class="a2">[6/10]</span> <span class="a1">formula fd</span>
+      ==&gt; Installing fd 10.2.0
+      <span class="a32">✓</span> done
+
+<span class="a2">[7/10]</span> <span class="a1">formula fzf</span>
+      ==&gt; Installing fzf 0.57.0
+      <span class="a32">✓</span> done
+
+<span class="a2">[8/10]</span> <span class="a1">formula bat</span>
+      ==&gt; Installing bat 0.24.0
+      <span class="a32">✓</span> done
+
+<span class="a2">[9/10]</span> <span class="a1">formula shellcheck</span>
+      ==&gt; Installing shellcheck 0.10.0
+      <span class="a32">✓</span> done
+
+<span class="a2">[10/10]</span> <span class="a1">formula tmux</span>
+      ==&gt; Installing tmux 3.5
+      <span class="a32">✓</span> done
+
+<span class="a32">✓</span> 10 applied.
+<span class="a2">Originals of changed files: ~/.devbox/backups/YYYYMMDD-HHMMSS</span>
+<span class="a2">Log: ~/.devbox/devbox.log</span>
+$ devbox apply --yes --profile base
+<span class="a1">devbox 0.1.0</span> apply · profiles: base
+<span class="a2">resolved 10 steps from: base</span>
+
+  <span class="a32">✓</span> <span class="a2">block    </span> homebrew-shellenv <span class="a2">~/.zprofile</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> git               <span class="a2">2.47.1</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> gh                <span class="a2">2.63.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> jq                <span class="a2">1.7.1</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> ripgrep           <span class="a2">14.1.1</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> fd                <span class="a2">10.2.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> fzf               <span class="a2">0.57.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> bat               <span class="a2">0.24.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> shellcheck        <span class="a2">0.10.0</span>
+  <span class="a32">✓</span> <span class="a2">formula  </span> tmux              <span class="a2">3.5</span>
+
+<span class="a32">✓</span> <span class="a1">Nothing to do.</span> 10 steps already satisfied.</pre></div>
+        <div class="t-panel" id="panel-doctor" role="tabpanel" aria-labelledby="tab-doctor" hidden><pre>$ devbox doctor --profile php-laravel
+<span class="a1">devbox 0.1.0</span> doctor · profiles: php-laravel
+
+<span class="a1">Homebrew</span>
+  <span class="a32">✓</span> brew                   <span class="a2">4.4.12</span>
+
+<span class="a1">Tools</span>
+  <span class="a32">✓</span> git                    <span class="a2">2.47.1 (&gt;= 2.30)</span>
+  <span class="a32">✓</span> gh                     <span class="a2">2.63.0 (&gt;= 2.40)</span>
+  <span class="a31">✗</span> jq                     <span class="a2">1.5.0 is older than required 1.6</span>
+  <span class="a32">✓</span> ripgrep                <span class="a2">14.1.1 (&gt;= 13.0)</span>
+  <span class="a32">✓</span> fd                     <span class="a2">10.2.0 (&gt;= 9.0)</span>
+  <span class="a32">✓</span> fzf                    <span class="a2">0.57.0 (&gt;= 0.40)</span>
+  <span class="a32">✓</span> bat                    <span class="a2">0.24.0 (&gt;= 0.22)</span>
+  <span class="a32">✓</span> shellcheck             <span class="a2">0.10.0 (&gt;= 0.9)</span>
+  <span class="a32">✓</span> tmux                   <span class="a2">3.5 (&gt;= 3.2)</span>
+  <span class="a31">✗</span> php                    <span class="a2">8.1.27 is older than required 8.2</span>
+  <span class="a32">✓</span> composer               <span class="a2">2.8.3 (&gt;= 2.5)</span>
+  <span class="a32">✓</span> mysql                  <span class="a2">9.1.0 (&gt;= 8.0)</span>
+  <span class="a32">✓</span> sqlite3                <span class="a2">3.43.2 (&gt;= 3.35)</span>
+  <span class="a32">✓</span> valet                  <span class="a2">4.6.0 (&gt;= 4.0)</span>
+
+<span class="a1">Setup</span>
+  <span class="a32">✓</span> valet-composer-require <span class="a2">check passed</span>
+  <span class="a32">✓</span> valet-install          <span class="a2">check passed</span>
+  <span class="a32">✓</span> valet-park             <span class="a2">check passed</span>
+
+<span class="a1">Config</span>
+  <span class="a32">✓</span> homebrew-shellenv      <span class="a2">~/.zprofile</span>
+  <span class="a33">!</span> composer-global-bin    <span class="a2">drift: ~/.zshrc: block differs from the profile (apply will correct it)</span>
+
+<span class="a1">Services</span>
+  <span class="a32">✓</span> dnsmasq                <span class="a2">started</span>
+  <span class="a31">✗</span> nginx                  <span class="a2">stopped · valet install starts it</span>
+  <span class="a32">✓</span> php                    <span class="a2">started</span>
+
+<span class="a1">PATH</span>
+  <span class="a32">✓</span> path-order             <span class="a2">/opt/homebrew/bin precedes the system directories</span>
+  <span class="a33">!</span> php                    <span class="a2">shadowed: /usr/bin/php (8.1.27) wins over /opt/homebrew/bin/php (8.4.1)</span>
+
+<span class="a1">System</span>
+  <span class="a32">✓</span> disk                   <span class="a2">250 GB free</span>
+  <span class="a32">✓</span> git-identity           <span class="a2">Test User &lt;test@example.invalid&gt;</span>
+  <span class="a33">!</span> ssh-key                <span class="a2">no public key in ~/.ssh (ssh-keygen -t ed25519)</span>
+  <span class="a33">!</span> gh-auth                <span class="a2">not logged in (gh auth login)</span>
+
+<span class="a1">Summary:</span> 22 ok · 4 warning(s) · 3 failure(s)</pre></div>
+      </div>
+    </div>
+    <p class="t-caption">This is real output of <code>bin/devbox</code>, captured by <code>scripts/capture-demo.sh</code> against the mocked machine the test suite uses: a fake Homebrew and a temp <code>HOME</code>. Versions are fixture values, not release data. The temp directory is shown as <code>/opt/homebrew</code> and <code>/usr/bin</code>, and backup timestamps as <code>YYYYMMDD-HHMMSS</code>. Nothing here was run against a real Mac.</p>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Setup that lives in someone's head</h2>
+    <div class="split">
+      <div class="prose">
+        <p>A new laptop is a day of installing and tweaking. Two people on the same team end up with different PHP versions and different PATHs. When a laptop dies, the answer to "how was it set up?" goes with it.</p>
+        <p>The usual fixes are a wiki page that rots or a shell script that only works once. devbox keeps the setup in small manifest files in git, and every step knows how to check itself, so it is safe to run again whenever you like.</p>
+      </div>
+      <div>
+        <p class="label">What a profile looks like</p>
+        <pre class="code" tabindex="0"><code># node: Node.js through fnm, tracking the current LTS.
+summary: &quot;Node.js via fnm, tracking the current LTS&quot;
+include: base
+
+formula fnm min=1.35 why=&quot;Fast Node version manager&quot;
+block fnm-shell file=&quot;~/.zshrc&quot; line=&quot;eval \&quot;$(fnm env --use-on-cd --shell zsh)\&quot;&quot; why=&quot;Switches Node version per project&quot;
+cmd node-lts run=&quot;fnm install --lts&quot; check=&quot;fnm list | grep -Eq 'v[0-9]+[.][0-9]+'&quot; why=&quot;Installs the current LTS release&quot;</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Four rules the tool keeps</h2>
+    <p class="section-lede">A tool that edits your dotfiles has to earn trust. These are the properties the tests pin down.</p>
+    <div class="grid four">
+      <div class="card"><span class="num">01</span><h3>Plan before apply</h3><p><code>devbox</code> with no arguments is <code>plan</code>. It prints the exact command for every change, and with <code>--dry-run</code> the tests assert that nothing on the machine moved.</p></div>
+      <div class="card"><span class="num">02</span><h3>Idempotent steps</h3><p>Every step has a check. Apply runs only unsatisfied steps, then re-checks. The second run is a no-op, for every bundled profile.</p></div>
+      <div class="card"><span class="num">03</span><h3>Managed blocks</h3><p>Shell config edits live between begin and end markers and are replaced in place, never appended twice. Your own lines are left alone.</p></div>
+      <div class="card"><span class="num">04</span><h3>Backups and a log</h3><p>Files are copied to <code>~/.devbox/backups/</code> before they change, macOS defaults get a restore script, and every run appends to a log.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="split">
+      <div class="prose">
+        <h2>Managed blocks, not appended lines</h2>
+        <p>Re-running a script that does <code>echo ... &gt;&gt; ~/.zshrc</code> adds the line again each time. devbox writes a region with markers and replaces that region on the next run. If you edit inside it, doctor reports drift and apply puts it back. If the markers are damaged, devbox refuses to guess and tells you to fix it by hand.</p>
+        <p>This is the dotfile from the sandbox after one apply, with three lines of the user's own above the block.</p>
+      </div>
+      <div>
+        <pre class="code" tabindex="0" aria-label="Contents of .zprofile after apply"><code>$ cat ~/.zprofile
+# my own settings
+alias ll="ls -lah"
+export EDITOR=vim
+
+# &gt;&gt;&gt; devbox:homebrew-shellenv &gt;&gt;&gt; managed by devbox; edits between the markers are overwritten
+if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; elif [ -x /usr/local/bin/brew ]; then eval "$(/usr/local/bin/brew shellenv)"; fi
+# &lt;&lt;&lt; devbox:homebrew-shellenv &lt;&lt;&lt;</code></pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Profiles</h2>
+    <p class="section-lede">Each profile is a manifest in <code>profiles/</code>. They can include each other. These cards, and every page behind them, are generated from the manifests.</p>
+    <div class="grid three">
+      <a class="card" href="profiles/base.html">
+        <h3><span>base</span></h3>
+        <p>Core command-line tools: git, gh, jq, ripgrep, fd, fzf, bat, shellcheck, tmux</p>
+        <p class="meta">10 steps</p>
+      </a>
+      <a class="card" href="profiles/data.html">
+        <h3><span>data</span></h3>
+        <p>SQLite and DuckDB for quick data work</p>
+        <p class="meta">includes base · 12 steps</p>
+      </a>
+      <a class="card" href="profiles/editor.html">
+        <h3><span>editor</span></h3>
+        <p>Visual Studio Code with a curated extension list</p>
+        <p class="meta">8 steps</p>
+      </a>
+      <a class="card" href="profiles/macos-defaults.html">
+        <h3><span>macos-defaults</span></h3>
+        <p>Curated, reversible macOS preferences (Finder, Dock, keyboard, text)</p>
+        <p class="meta">11 steps</p>
+      </a>
+      <a class="card" href="profiles/node.html">
+        <h3><span>node</span></h3>
+        <p>Node.js via fnm, tracking the current LTS</p>
+        <p class="meta">includes base · 13 steps</p>
+      </a>
+      <a class="card" href="profiles/php-laravel.html">
+        <h3><span>php-laravel</span></h3>
+        <p>PHP, Composer, MySQL and Laravel Valet</p>
+        <p class="meta">includes base · 22 steps</p>
+      </a>
+      <a class="card" href="profiles/python.html">
+        <h3><span>python</span></h3>
+        <p>Python managed by uv, with pinned interpreters</p>
+        <p class="meta">includes base · 13 steps</p>
+      </a>
+      <a class="card" href="profiles/salesforce.html">
+        <h3><span>salesforce</span></h3>
+        <p>Salesforce CLI (sf) on a managed Node LTS, with helper aliases</p>
+        <p class="meta">includes node · 16 steps</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>What it does not do</h2>
+    <div class="prose">
+      <ul>
+        <li>It is macOS only. It refuses to run elsewhere, and refuses to run as root.</li>
+        <li>It has been exercised against a mocked <code>brew</code>, <code>defaults</code> and friends, not end to end on a clean Mac. Real installs, and Laravel Valet's real behaviour, are unverified.</li>
+        <li>It does not install Homebrew for you. It tells you where to get it, rather than piping an installer into a shell.</li>
+        <li>It manages what a profile declares. It will not discover and remove things you installed by hand.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('js');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.t-tab'));
+  function show(tab) {
+    tabs.forEach(function (t) {
+      var on = t === tab;
+      t.setAttribute('aria-selected', on ? 'true' : 'false');
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+  }
+  tabs.forEach(function (t, i) {
+    t.addEventListener('click', function () { show(t); });
+    t.addEventListener('keydown', function (e) {
+      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+      if (j < 0) return;
+      e.preventDefault();
+      j = (j + tabs.length) % tabs.length;
+      show(tabs[j]);
+      tabs[j].focus();
+    });
+  });
+  show(tabs[0]);
+})();
+</script>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
+    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+  </div>
+</footer>
+</body>
+</html>

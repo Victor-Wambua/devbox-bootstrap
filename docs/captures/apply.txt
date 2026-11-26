@@ -1,0 +1,86 @@
+$ devbox apply --yes --profile base
+devbox 0.1.0 apply · profiles: base
+resolved 10 steps from: base
+
+  + block     homebrew-shellenv ~/.zprofile: block not present
+      # write managed block "homebrew-shellenv" in ~/.zprofile
+        | if [ -x /opt/homebrew/bin/brew ]; then eval "$(/opt/homebrew/bin/brew shellenv)"; elif [ -x /usr/local/bin/brew ]; then eval "$(/usr/local/bin/brew shellenv)"; fi
+  + formula   git               not installed
+      $ brew install git
+  + formula   gh                not installed
+      $ brew install gh
+  + formula   jq                not installed
+      $ brew install jq
+  + formula   ripgrep           not installed
+      $ brew install ripgrep
+  + formula   fd                not installed
+      $ brew install fd
+  + formula   fzf               not installed
+      $ brew install fzf
+  + formula   bat               not installed
+      $ brew install bat
+  + formula   shellcheck        not installed
+      $ brew install shellcheck
+  + formula   tmux              not installed
+      $ brew install tmux
+
+Plan: 10 to apply (10 new, 0 to correct), 0 already satisfied.
+
+[1/10] block homebrew-shellenv
+      ✓ done
+
+[2/10] formula git
+      ==> Installing git 2.47.1
+      ✓ done
+
+[3/10] formula gh
+      ==> Installing gh 2.63.0
+      ✓ done
+
+[4/10] formula jq
+      ==> Installing jq 1.7.1
+      ✓ done
+
+[5/10] formula ripgrep
+      ==> Installing ripgrep 14.1.1
+      ✓ done
+
+[6/10] formula fd
+      ==> Installing fd 10.2.0
+      ✓ done
+
+[7/10] formula fzf
+      ==> Installing fzf 0.57.0
+      ✓ done
+
+[8/10] formula bat
+      ==> Installing bat 0.24.0
+      ✓ done
+
+[9/10] formula shellcheck
+      ==> Installing shellcheck 0.10.0
+      ✓ done
+
+[10/10] formula tmux
+      ==> Installing tmux 3.5
+      ✓ done
+
+✓ 10 applied.
+Originals of changed files: ~/.devbox/backups/YYYYMMDD-HHMMSS
+Log: ~/.devbox/devbox.log
+$ devbox apply --yes --profile base
+devbox 0.1.0 apply · profiles: base
+resolved 10 steps from: base
+
+  ✓ block     homebrew-shellenv ~/.zprofile
+  ✓ formula   git               2.47.1
+  ✓ formula   gh                2.63.0
+  ✓ formula   jq                1.7.1
+  ✓ formula   ripgrep           14.1.1
+  ✓ formula   fd                10.2.0
+  ✓ formula   fzf               0.57.0
+  ✓ formula   bat               0.24.0
+  ✓ formula   shellcheck        0.10.0
+  ✓ formula   tmux              3.5
+
+✓ Nothing to do. 10 steps already satisfied.

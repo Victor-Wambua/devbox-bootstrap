@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>devbox profile: python</title>
+<meta name="description" content="Python managed by uv, with pinned interpreters">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#14213d"/><path d="M9 10.5l6.5 5.5L9 21.5" fill="none" stroke="#fca311" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 22h6" stroke="#e4e9f4" stroke-width="2.6" stroke-linecap="round"/></svg><span>devbox</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="../profiles/index.html" aria-current="page">Profiles</a>
+      <a href="../guide.html">Write your own</a>
+      <a href="https://github.com/Victor-Wambua/devbox-bootstrap">GitHub</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="../index.html">devbox</a> / <a href="index.html">profiles</a> / python</div>
+    <h1>python</h1>
+    <p class="lede">Python managed by uv, with pinned interpreters</p>
+    <div class="stats">
+      <div class="stat"><b>13</b><span>steps in total</span></div>
+      <div class="stat"><b>3</b><span>defined here</span></div>
+      <div class="stat"><b>1</b><span>profiles included</span></div>
+    </div>
+    <p style="margin-top:16px"><span class="label">Includes</span><br><a class="chip" href="base.html">base</a></p>
+    <p style="margin-top:24px"><span class="label">Use it</span></p>
+    <div class="install" tabindex="0" role="region" aria-label="Commands">devbox plan --profile python &amp;&amp; devbox apply --profile python &amp;&amp; devbox doctor --profile python</div>
+  </div>
+
+  <section style="padding-top:32px">
+    <h2>Steps</h2>
+    <p class="section-lede">In the order devbox runs them. Included profiles come first.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Steps of python">
+      <table>
+        <thead><tr><th>Kind</th><th>Id</th><th>From</th><th>Details</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kind">block</span></td><td class="mono">homebrew-shellenv</td><td class="mono">base</td><td><span class="chip">file=~/.zprofile</span><div><span class="muted">line</span> <code>if [ -x /opt/homebrew/bin/brew ]; then eval &quot;$(/opt/homebrew/bin/brew shellenv)&quot;; elif [ -x /usr/local/bin/brew ]; then eval &quot;$(/usr/local/bin/brew shellenv)&quot;; fi</code></div></td><td class="muted">Puts Homebrew's bin directory ahead of /usr/bin</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">git</td><td class="mono">base</td><td><span class="chip">min=2.30</span></td><td class="muted">Apple's bundled git lags behind</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">gh</td><td class="mono">base</td><td><span class="chip">min=2.40</span></td><td class="muted">GitHub CLI</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">jq</td><td class="mono">base</td><td><span class="chip">min=1.6</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">ripgrep</td><td class="mono">base</td><td><span class="chip">bin=rg</span><span class="chip">min=13.0</span></td><td class="muted">Fast recursive search</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">fd</td><td class="mono">base</td><td><span class="chip">min=9.0</span></td><td class="muted">Friendlier find</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">fzf</td><td class="mono">base</td><td><span class="chip">min=0.40</span></td><td class="muted">Fuzzy finder</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">bat</td><td class="mono">base</td><td><span class="chip">min=0.22</span></td><td class="muted">cat with syntax highlighting</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">shellcheck</td><td class="mono">base</td><td><span class="chip">min=0.9</span></td><td class="muted">Lints shell scripts</td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">tmux</td><td class="mono">base</td><td><span class="chip">min=3.2</span><span class="chip">versionarg=-V</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">formula</span></td><td class="mono">uv</td><td class="mono">python</td><td><span class="chip">min=0.5</span></td><td class="muted">Package and Python version manager</td></tr>
+          <tr><td><span class="kind">uvpython</span></td><td class="mono">3.12</td><td class="mono">python</td><td></td><td class="muted">Default for new projects</td></tr>
+          <tr><td><span class="kind">uvpython</span></td><td class="mono">3.13</td><td class="mono">python</td><td></td><td class="muted">Current stable</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div>
+        <h2>Manifest</h2>
+        <p class="label">profiles/python.conf</p>
+        <pre class="code" tabindex="0"><code># python: uv-managed interpreters.
+summary: &quot;Python managed by uv, with pinned interpreters&quot;
+include: base
+
+formula uv min=0.5 why=&quot;Package and Python version manager&quot;
+uvpython 3.12 why=&quot;Default for new projects&quot;
+uvpython 3.13 why=&quot;Current stable&quot;</code></pre>
+      </div>
+      <div>
+        <h2>Brewfile</h2>
+        <p class="label">Brewfiles/python.Brewfile (generated)</p>
+        <pre class="code" tabindex="0"><code># Generated by: devbox list --brewfile --profile python
+# Do not edit; change the profile manifests and regenerate.
+brew &quot;git&quot;
+brew &quot;gh&quot;
+brew &quot;jq&quot;
+brew &quot;ripgrep&quot;
+brew &quot;fd&quot;
+brew &quot;fzf&quot;
+brew &quot;bat&quot;
+brew &quot;shellcheck&quot;
+brew &quot;tmux&quot;
+brew &quot;uv&quot;
+# 3 step(s) (cmd, block, defaults, uvpython, installer) have no Brewfile form; use devbox apply.</code></pre>
+        <p class="section-lede" style="margin-top:12px">For people who want a plain Brewfile. Only formulae, casks and VS Code extensions have a Brewfile form; the rest need <code>devbox apply</code>.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
+    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+  </div>
+</footer>
+</body>
+</html>

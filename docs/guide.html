@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Write your own devbox profile</title>
+<meta name="description" content="How to write, test and share a devbox profile: format, step kinds, managed blocks and safety rules.">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#14213d"/><path d="M9 10.5l6.5 5.5L9 21.5" fill="none" stroke="#fca311" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 22h6" stroke="#e4e9f4" stroke-width="2.6" stroke-linecap="round"/></svg><span>devbox</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="profiles/index.html">Profiles</a>
+      <a href="guide.html" aria-current="page">Write your own</a>
+      <a href="https://github.com/Victor-Wambua/devbox-bootstrap">GitHub</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="index.html">devbox</a> / write your own</div>
+    <h1>Write your own profile</h1>
+    <p class="lede">A profile is a plain text file. It says what a machine should look like; devbox works out what to do. You can start from an existing one, or capture your current laptop with <code>devbox export</code>.</p>
+  </div>
+  <div class="prose" style="padding-bottom:64px">
+    <h2>Where profiles live</h2>
+    <p>devbox looks for <code>NAME.conf</code> in these places, and the first match wins:</p>
+    <ol>
+      <li>Each directory in <code>$DEVBOX_PROFILE_PATH</code> (colon separated).</li>
+      <li><code>~/.devbox/profiles/</code></li>
+      <li>The <code>profiles/</code> directory that ships with devbox.</li>
+    </ol>
+    <p>So a team can keep its profiles in a git repo, point <code>DEVBOX_PROFILE_PATH</code> at a checkout, and even override a bundled profile by reusing its name.</p>
+
+    <h2>A first profile</h2>
+<pre class="code" tabindex="0"><code># ~/.devbox/profiles/team-web.conf
+summary: &quot;What our web team installs&quot;
+include: base node
+
+formula postgresql@16 min=16.0 why=&quot;Matches production&quot;
+cask    docker bin=docker
+
+block   team-env file=&quot;~/.zshrc&quot; line=&quot;export COMPOSE_PROJECT_NAME=web&quot;
+cmd     clone-monorepo run=&quot;git clone git@github.com:example/web.git ~/code/web&quot; check=&quot;test -d ~/code/web/.git&quot;</code></pre>
+    <p>Then:</p>
+<pre class="code" tabindex="0"><code>devbox plan --profile team-web      # what would change, and the exact commands
+devbox apply --profile team-web     # make it so (asks first)
+devbox doctor --profile team-web    # what has drifted since</code></pre>
+
+    <h2>The format</h2>
+    <p>One directive per line. A line is either a header (<code>summary:</code> or <code>include:</code>) or a step: a kind, an id, then <code>key=value</code> options. Use double quotes around values that contain spaces. Inside quotes, <code>\"</code> and <code>\\</code> are the only escapes. <code>#</code> starts a comment at the start of a word.</p>
+    <div class="callout"><p>The parser never evaluates anything. <code>$HOME</code>, backticks and <code>$( )</code> inside a value are kept as literal text; they only run if you put them in a <code>cmd</code> or <code>check</code> string, which devbox runs with <code>bash -c</code> after showing it to you in the plan.</p></div>
+
+    <h2>Step kinds</h2>
+  </div>
+  <div class="table-wrap" tabindex="0" role="region" aria-label="Step kinds" style="margin-bottom:64px">
+    <table>
+      <thead><tr><th>Kind</th><th>Required</th><th>Optional</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><span class="kind">formula</span></td><td><span class="muted">id only</span></td><td><span class="chip">bin</span><span class="chip">min</span><span class="chip">versionarg</span><span class="chip">why</span></td><td>Installs a Homebrew formula. Doctor also checks the binary is on PATH and meets min.</td></tr>
+        <tr><td><span class="kind">cask</span></td><td><span class="muted">id only</span></td><td><span class="chip">bin</span><span class="chip">min</span><span class="chip">versionarg</span><span class="chip">why</span></td><td>Installs a Homebrew cask. Give bin to have doctor check its command line tool.</td></tr>
+        <tr><td><span class="kind">service</span></td><td><span class="muted">id only</span></td><td><span class="chip">start</span><span class="chip">why</span></td><td>A Homebrew service. With start=yes apply starts it; otherwise it is only checked by doctor.</td></tr>
+        <tr><td><span class="kind">tool</span></td><td><span class="muted">id only</span></td><td><span class="chip">min</span><span class="chip">versionarg</span><span class="chip">why</span></td><td>An expectation devbox never installs (for example a tool macOS ships). Doctor checks it.</td></tr>
+        <tr><td><span class="kind">cmd</span></td><td><span class="chip">run</span><span class="chip">check</span></td><td><span class="chip">sudo</span><span class="chip">why</span></td><td>Runs a command. check decides if it is already done and must be read-only. sudo=yes lets it prompt.</td></tr>
+        <tr><td><span class="kind">block</span></td><td><span class="chip">file</span><span class="chip">line</span></td><td><span class="chip">why</span></td><td>Owns a marked region of a file under your home directory, one line= option per line.</td></tr>
+        <tr><td><span class="kind">defaults</span></td><td><span class="chip">domain</span><span class="chip">key</span><span class="chip">type</span><span class="chip">value</span></td><td><span class="chip">restart</span><span class="chip">why</span></td><td>Sets one macOS preference. The previous value is saved to a restore script first.</td></tr>
+        <tr><td><span class="kind">vscode</span></td><td><span class="muted">id only</span></td><td><span class="chip">why</span></td><td>Installs a VS Code extension by id.</td></tr>
+        <tr><td><span class="kind">uvpython</span></td><td><span class="muted">id only</span></td><td><span class="chip">why</span></td><td>Installs a Python version with uv.</td></tr>
+        <tr><td><span class="kind">installer</span></td><td><span class="chip">url</span><span class="chip">sha256</span><span class="chip">run</span><span class="chip">check</span></td><td><span class="chip">why</span></td><td>Downloads from an https URL, verifies sha256, then runs it. Needs --yes.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose" style="padding-bottom:64px">
+    <h2>Rules that keep profiles safe</h2>
+    <ul>
+      <li><strong>Every step needs a way to tell it is done.</strong> Built-in kinds have one. For <code>cmd</code>, the <code>check</code> must be read-only and exit 0 only when the work is already done. Apply re-runs the check afterwards, and a step that does not pass it is reported as failed.</li>
+      <li><strong>Blocks only touch your home directory.</strong> <code>file</code> must start with <code>~/</code> and may not contain <code>..</code>. Block ids are unique per profile set; two profiles that define the same step identically are merged, and conflicting definitions are an error.</li>
+      <li><strong>Profiles are code.</strong> A <code>cmd</code> runs with your privileges. Read a teammate's profile as you would read a script, and read the plan before you apply it.</li>
+      <li><strong>Upstream installers are a last resort.</strong> An <code>installer</code> step downloads over https, verifies a pinned sha256 and only then runs the file. It is never run without <code>--yes</code>. None of the bundled profiles uses one.</li>
+      <li><strong>Prefer Homebrew steps</strong> to <code>cmd</code> where you can: they are checked, listed in the Brewfile and shown by doctor with versions.</li>
+    </ul>
+
+    <h2>Managed blocks</h2>
+    <p>A <code>block</code> step owns this region of the file, and nothing else in it:</p>
+<pre class="code" tabindex="0"><code># &gt;&gt;&gt; devbox:team-env &gt;&gt;&gt; managed by devbox; edits between the markers are overwritten
+export COMPOSE_PROJECT_NAME=web
+# &lt;&lt;&lt; devbox:team-env &lt;&lt;&lt;</code></pre>
+    <p>If the block is missing, apply appends it once. If its content differs from the profile, apply replaces it in place. If the markers are unbalanced or duplicated, devbox marks the step blocked and changes nothing. Before any file changes, the original is copied to <code>~/.devbox/backups/&lt;time&gt;/files/</code>.</p>
+
+    <h2>Test a profile safely</h2>
+    <ol>
+      <li><code>devbox list --profile team-web</code> parses it and shows the resolved steps, with no machine access.</li>
+      <li><code>scripts/try.sh -- plan --profile team-web</code> runs devbox against a throwaway mocked machine: temp <code>HOME</code>, mock <code>brew</code>, nothing real.</li>
+      <li><code>devbox plan --check --profile team-web</code> exits 4 while anything is pending, which makes a cheap drift check in CI or a login script.</li>
+    </ol>
+
+    <h2>Exit codes</h2>
+    <div class="table-wrap" style="margin-top:16px"><table>
+      <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td class="mono">0</td><td>Success. For doctor: no failures (warnings allowed).</td></tr>
+        <tr><td class="mono">1</td><td>A step failed, or doctor found failures.</td></tr>
+        <tr><td class="mono">2</td><td>Bad flags, or a manifest that does not parse or has an include cycle.</td></tr>
+        <tr><td class="mono">3</td><td>Refused by a safety rule: root, not macOS, no <code>--yes</code>, Homebrew missing.</td></tr>
+        <tr><td class="mono">4</td><td><code>plan --check</code> found changes pending.</td></tr>
+      </tbody>
+    </table></div>
+  </div>
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
+    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+  </div>
+</footer>
+</body>
+</html>

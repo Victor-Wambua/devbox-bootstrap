@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>devbox profile: macos-defaults</title>
+<meta name="description" content="Curated, reversible macOS preferences (Finder, Dock, keyboard, text)">
+<meta name="color-scheme" content="light dark">
+<link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="../index.html"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect width="32" height="32" rx="7" fill="#14213d"/><path d="M9 10.5l6.5 5.5L9 21.5" fill="none" stroke="#fca311" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 22h6" stroke="#e4e9f4" stroke-width="2.6" stroke-linecap="round"/></svg><span>devbox</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="../profiles/index.html" aria-current="page">Profiles</a>
+      <a href="../guide.html">Write your own</a>
+      <a href="https://github.com/Victor-Wambua/devbox-bootstrap">GitHub</a>
+    </nav>
+  </div>
+</header>
+<main id="main">
+<div class="wrap">
+  <div class="page-head">
+    <div class="crumbs"><a href="../index.html">devbox</a> / <a href="index.html">profiles</a> / macos-defaults</div>
+    <h1>macos-defaults</h1>
+    <p class="lede">Curated, reversible macOS preferences (Finder, Dock, keyboard, text)</p>
+    <div class="stats">
+      <div class="stat"><b>11</b><span>steps in total</span></div>
+      <div class="stat"><b>11</b><span>defined here</span></div>
+      <div class="stat"><b>0</b><span>profiles included</span></div>
+    </div>
+    <p style="margin-top:24px"><span class="label">Use it</span></p>
+    <div class="install" tabindex="0" role="region" aria-label="Commands">devbox plan --profile macos-defaults &amp;&amp; devbox apply --profile macos-defaults &amp;&amp; devbox doctor --profile macos-defaults</div>
+  </div>
+
+  <section style="padding-top:32px">
+    <h2>Steps</h2>
+    <p class="section-lede">In the order devbox runs them. Included profiles come first.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Steps of macos-defaults">
+      <table>
+        <thead><tr><th>Kind</th><th>Id</th><th>From</th><th>Details</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">finder-show-extensions</td><td class="mono">macos-defaults</td><td><span class="chip">domain=NSGlobalDomain</span><span class="chip">key=AppleShowAllExtensions</span><span class="chip">type=bool</span><span class="chip">value=true</span></td><td class="muted">Show every file extension</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">finder-path-bar</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.finder</span><span class="chip">key=ShowPathbar</span><span class="chip">type=bool</span><span class="chip">value=true</span><span class="chip">restart=Finder</span></td><td class="muted">Path bar at the bottom of Finder windows</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">finder-status-bar</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.finder</span><span class="chip">key=ShowStatusBar</span><span class="chip">type=bool</span><span class="chip">value=true</span><span class="chip">restart=Finder</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">finder-list-view</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.finder</span><span class="chip">key=FXPreferredViewStyle</span><span class="chip">type=string</span><span class="chip">value=Nlsv</span><span class="chip">restart=Finder</span></td><td class="muted">List view by default</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">finder-no-network-ds-store</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.desktopservices</span><span class="chip">key=DSDontWriteNetworkStores</span><span class="chip">type=bool</span><span class="chip">value=true</span></td><td class="muted">No .DS_Store litter on network shares</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">dock-autohide</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.dock</span><span class="chip">key=autohide</span><span class="chip">type=bool</span><span class="chip">value=true</span><span class="chip">restart=Dock</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">dock-no-recents</td><td class="mono">macos-defaults</td><td><span class="chip">domain=com.apple.dock</span><span class="chip">key=show-recents</span><span class="chip">type=bool</span><span class="chip">value=false</span><span class="chip">restart=Dock</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">keyboard-repeat</td><td class="mono">macos-defaults</td><td><span class="chip">domain=NSGlobalDomain</span><span class="chip">key=KeyRepeat</span><span class="chip">type=int</span><span class="chip">value=2</span></td><td class="muted">Faster key repeat; applies after you log out and in</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">keyboard-initial-delay</td><td class="mono">macos-defaults</td><td><span class="chip">domain=NSGlobalDomain</span><span class="chip">key=InitialKeyRepeat</span><span class="chip">type=int</span><span class="chip">value=25</span></td><td class="muted"></td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">no-smart-quotes</td><td class="mono">macos-defaults</td><td><span class="chip">domain=NSGlobalDomain</span><span class="chip">key=NSAutomaticQuoteSubstitutionEnabled</span><span class="chip">type=bool</span><span class="chip">value=false</span></td><td class="muted">Curly quotes break pasted code</td></tr>
+          <tr><td><span class="kind">defaults</span></td><td class="mono">no-smart-dashes</td><td class="mono">macos-defaults</td><td><span class="chip">domain=NSGlobalDomain</span><span class="chip">key=NSAutomaticDashSubstitutionEnabled</span><span class="chip">type=bool</span><span class="chip">value=false</span></td><td class="muted"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="split">
+      <div>
+        <h2>Manifest</h2>
+        <p class="label">profiles/macos-defaults.conf</p>
+        <pre class="code" tabindex="0"><code># macos-defaults: a small, curated and reversible set of macOS preferences.
+#
+# Before each value is changed, devbox records the previous one in
+# ~/.devbox/backups/&lt;time&gt;/restore-defaults.sh, a script you can run to undo it.
+summary: &quot;Curated, reversible macOS preferences (Finder, Dock, keyboard, text)&quot;
+
+defaults finder-show-extensions domain=NSGlobalDomain key=AppleShowAllExtensions type=bool value=true why=&quot;Show every file extension&quot;
+defaults finder-path-bar domain=com.apple.finder key=ShowPathbar type=bool value=true restart=Finder why=&quot;Path bar at the bottom of Finder windows&quot;
+defaults finder-status-bar domain=com.apple.finder key=ShowStatusBar type=bool value=true restart=Finder
+defaults finder-list-view domain=com.apple.finder key=FXPreferredViewStyle type=string value=Nlsv restart=Finder why=&quot;List view by default&quot;
+defaults finder-no-network-ds-store domain=com.apple.desktopservices key=DSDontWriteNetworkStores type=bool value=true why=&quot;No .DS_Store litter on network shares&quot;
+defaults dock-autohide domain=com.apple.dock key=autohide type=bool value=true restart=Dock
+defaults dock-no-recents domain=com.apple.dock key=show-recents type=bool value=false restart=Dock
+defaults keyboard-repeat domain=NSGlobalDomain key=KeyRepeat type=int value=2 why=&quot;Faster key repeat; applies after you log out and in&quot;
+defaults keyboard-initial-delay domain=NSGlobalDomain key=InitialKeyRepeat type=int value=25
+defaults no-smart-quotes domain=NSGlobalDomain key=NSAutomaticQuoteSubstitutionEnabled type=bool value=false why=&quot;Curly quotes break pasted code&quot;
+defaults no-smart-dashes domain=NSGlobalDomain key=NSAutomaticDashSubstitutionEnabled type=bool value=false</code></pre>
+      </div>
+      <div>
+        <h2>Brewfile</h2>
+        <p class="label">Brewfiles/macos-defaults.Brewfile (generated)</p>
+        <pre class="code" tabindex="0"><code># Generated by: devbox list --brewfile --profile macos-defaults
+# Do not edit; change the profile manifests and regenerate.
+# 11 step(s) (cmd, block, defaults, uvpython, installer) have no Brewfile form; use devbox apply.</code></pre>
+        <p class="section-lede" style="margin-top:12px">For people who want a plain Brewfile. Only formulae, casks and VS Code extensions have a Brewfile form; the rest need <code>devbox apply</code>.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</main>
+<footer>
+  <div class="wrap">
+    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
+    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+  </div>
+</footer>
+</body>
+</html>
