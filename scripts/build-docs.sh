@@ -30,6 +30,7 @@ done
 mkdir -p "$site/assets" "$site/profiles" "$root/Brewfiles"
 cp "$src/style.css" "$site/assets/style.css"
 cp "$src/logo.svg" "$site/assets/logo.svg"
+cp "$src/site.js" "$site/assets/site.js"
 
 # ---- helpers ------------------------------------------------------------------------
 
@@ -43,6 +44,17 @@ ansi_html() {
 }
 
 logo_inline() { sed -e 's/ role="img" aria-label="devbox"/ aria-hidden="true" focusable="false"/' "$src/logo.svg"; }
+
+# cmd_block LABEL HTML-ESCAPED-COMMAND -> scrollable region with a Copy button (the button needs JS and is hidden without it)
+cmd_block() {
+  cat <<HTML
+<div class="cmd">
+      <div class="install scroll-x" tabindex="0" role="region" aria-label="$1">$2</div>
+      <button class="copy" type="button" data-copy><span data-copy-label>Copy</span><span class="sr-only"> command</span></button>
+      <span class="sr-only" role="status" data-copy-status></span>
+    </div>
+HTML
+}
 
 page_start() { # TITLE DESCRIPTION RELROOT CURRENT
   local title=$1 desc=$2 rel=$3 cur=${4:-}
@@ -60,6 +72,7 @@ page_start() { # TITLE DESCRIPTION RELROOT CURRENT
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="${rel}assets/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="${rel}assets/style.css">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -82,10 +95,15 @@ page_end() {
 </main>
 <footer>
   <div class="wrap">
-    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
-    <span>MIT licensed · <a href="$repo_url">source</a> · portfolio build, exercised against a mocked machine only</span>
+    <p>MIT licensed. A portfolio build, exercised against a mocked machine only.</p>
+    <ul aria-label="Elsewhere">
+      <li><a href="https://victor-wambua.github.io/victor-portfolio/">Victor Wambua's portfolio</a></li>
+      <li><a href="https://github.com/Victor-Wambua/case-studies">Case studies</a></li>
+      <li><a href="$repo_url">Source on GitHub</a></li>
+    </ul>
   </div>
 </footer>
+<script src="${1:-}assets/site.js" defer></script>
 </body>
 </html>
 HTML
@@ -131,22 +149,38 @@ done
 
 "$root/scripts/capture-demo.sh" "$tmp/ansi" >/dev/null
 
-# ---- 3. profile cards (shared by the landing page and the index) --------------------------
+# ---- 3. profile table (shared by the landing page and the index) --------------------------
 
-profile_cards() { # RELPREFIX
-  local n
+profile_table() { # RELPREFIX
+  local n inc i links
+  cat <<HTML
+      <table class="profiles" role="table">
+        <caption class="sr-only">Bundled devbox profiles: what each is, what it includes, and how many steps it resolves to</caption>
+        <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Profile</th><th scope="col" role="columnheader">What it is</th><th scope="col" role="columnheader">Includes</th><th scope="col" role="columnheader" class="steps">Steps</th></tr></thead>
+        <tbody role="rowgroup">
+HTML
   for n in "${names[@]}"; do
     profile_meta "$n"
-    local inc=""
-    [[ -n $P_INCLUDES ]] && inc="includes $P_INCLUDES · "
+    links=""
+    for i in $P_INCLUDES; do links+="${links:+, }<a href=\"$1$i.html\">$(esc "$i")</a>"; done
+    if [[ -n $links ]]; then
+      inc="<td class=\"inc\" role=\"cell\">$links</td>"
+    else
+      inc="<td class=\"inc none\" role=\"cell\"><span class=\"muted\">none</span></td>"
+    fi
     cat <<HTML
-      <a class="card" href="$1$n.html">
-        <h3><span>$(esc "$n")</span></h3>
-        <p>$(esc "$P_SUMMARY")</p>
-        <p class="meta">$(esc "$inc")$P_STEPS steps</p>
-      </a>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="$1$n.html">$(esc "$n")<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">$(esc "$P_SUMMARY")</td>
+            $inc
+            <td class="steps" role="cell">$P_STEPS</td>
+          </tr>
 HTML
   done
+  cat <<HTML
+        </tbody>
+      </table>
+HTML
 }
 
 # ---- 4. landing page ------------------------------------------------------------------------
@@ -157,32 +191,38 @@ HTML
   cat <<HTML
 <div class="hero">
   <div class="wrap">
-    <p class="eyebrow">macOS · bash 3.2+ · MIT</p>
-    <h1>Your laptop setup, written down and checkable.</h1>
-    <p class="lede">devbox is an idempotent bootstrap for developer Macs. <strong>Plan</strong> shows what would change. <strong>Apply</strong> changes only that, and running it again changes nothing. <strong>Doctor</strong> tells you what is missing or has drifted.</p>
-    <div class="cta">
-      <a class="btn primary" href="profiles/index.html">Browse the profiles</a>
-      <a class="btn" href="$repo_url">View on GitHub</a>
-    </div>
-    <p style="margin:24px 0 0"><span class="label">Try it without touching your machine</span></p>
-    <div class="install" tabindex="0" role="region" aria-label="Try command">git clone $repo_url &amp;&amp; cd devbox-bootstrap &amp;&amp; scripts/try.sh -- plan --profile php-laravel</div>
-
-    <div class="terminal" id="terminal">
-      <div class="t-bar">
-        <div class="t-dots" aria-hidden="true"><i></i><i></i><i></i></div>
-        <div class="t-tabs" role="tablist" aria-label="Captured sessions">
-          <button class="t-tab" role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="true" type="button">plan</button>
-          <button class="t-tab" role="tab" id="tab-apply" aria-controls="panel-apply" aria-selected="false" tabindex="-1" type="button">apply, twice</button>
-          <button class="t-tab" role="tab" id="tab-doctor" aria-controls="panel-doctor" aria-selected="false" tabindex="-1" type="button">doctor</button>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <p class="eyebrow">macOS, bash 3.2+, MIT licensed</p>
+        <h1>Your laptop setup, written down and checkable.</h1>
+        <p class="lede">devbox is an idempotent bootstrap for developer Macs. <strong>Plan</strong> shows what would change. <strong>Apply</strong> changes only that, and running it again changes nothing. <strong>Doctor</strong> tells you what is missing or has drifted.</p>
+        <div class="cta">
+          <a class="btn primary" href="profiles/index.html">Browse the profiles</a>
+          <a class="btn" href="$repo_url">View on GitHub</a>
         </div>
       </div>
-      <div class="t-body" tabindex="0" role="region" aria-label="Terminal output (scrollable)">
-        <div class="t-panel" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan"><pre>$(ansi_html "$tmp/ansi/plan.ansi")</pre></div>
-        <div class="t-panel" id="panel-apply" role="tabpanel" aria-labelledby="tab-apply" hidden><pre>$(ansi_html "$tmp/ansi/apply.ansi")</pre></div>
-        <div class="t-panel" id="panel-doctor" role="tabpanel" aria-labelledby="tab-doctor" hidden><pre>$(ansi_html "$tmp/ansi/doctor.ansi")</pre></div>
+
+      <div class="hero-try">
+        <p class="label">Try it without touching your machine</p>
+        $(cmd_block "Try-it command" "git clone $repo_url &amp;&amp; cd devbox-bootstrap &amp;&amp; scripts/try.sh -- plan --profile php-laravel")
+      </div>
+
+      <div class="hero-term">
+        <div class="terminal" id="terminal">
+          <div class="t-bar">
+            <div class="t-tabs" role="tablist" aria-label="Captured sessions">
+              <button class="t-tab" role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="true" type="button">plan</button>
+              <button class="t-tab" role="tab" id="tab-apply" aria-controls="panel-apply" aria-selected="false" tabindex="-1" type="button">apply, twice</button>
+              <button class="t-tab" role="tab" id="tab-doctor" aria-controls="panel-doctor" aria-selected="false" tabindex="-1" type="button">doctor</button>
+            </div>
+          </div>
+          <div class="t-panel scroll-x" id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" tabindex="0"><p class="t-title">plan</p><pre>$(ansi_html "$tmp/ansi/plan.ansi")</pre></div>
+          <div class="t-panel scroll-x" id="panel-apply" role="tabpanel" aria-labelledby="tab-apply" tabindex="0"><p class="t-title">apply, twice</p><pre>$(ansi_html "$tmp/ansi/apply.ansi")</pre></div>
+          <div class="t-panel scroll-x" id="panel-doctor" role="tabpanel" aria-labelledby="tab-doctor" tabindex="0"><p class="t-title">doctor</p><pre>$(ansi_html "$tmp/ansi/doctor.ansi")</pre></div>
+        </div>
+        <p class="t-caption">This is real output of <code>bin/devbox</code>, captured by <code>scripts/capture-demo.sh</code> against the mocked machine the test suite uses: a fake Homebrew and a temp <code>HOME</code>. Versions are fixture values, not release data. The temp directory is shown as <code>/opt/homebrew</code> and <code>/usr/bin</code>, and backup timestamps as <code>YYYYMMDD-HHMMSS</code>. Nothing here was run against a real Mac.</p>
       </div>
     </div>
-    <p class="t-caption">This is real output of <code>bin/devbox</code>, captured by <code>scripts/capture-demo.sh</code> against the mocked machine the test suite uses: a fake Homebrew and a temp <code>HOME</code>. Versions are fixture values, not release data. The temp directory is shown as <code>/opt/homebrew</code> and <code>/usr/bin</code>, and backup timestamps as <code>YYYYMMDD-HHMMSS</code>. Nothing here was run against a real Mac.</p>
   </div>
 </div>
 
@@ -196,7 +236,7 @@ HTML
       </div>
       <div>
         <p class="label">What a profile looks like</p>
-        <pre class="code" tabindex="0"><code>$(esc "$(sed -n '1,40p' "$root/profiles/node.conf")")</code></pre>
+        <pre class="code scroll-x" tabindex="0" role="region" aria-label="Manifest profiles/node.conf"><code>$(esc "$(sed -n '1,40p' "$root/profiles/node.conf")")</code></pre>
       </div>
     </div>
   </div>
@@ -206,12 +246,12 @@ HTML
   <div class="wrap">
     <h2>Four rules the tool keeps</h2>
     <p class="section-lede">A tool that edits your dotfiles has to earn trust. These are the properties the tests pin down.</p>
-    <div class="grid four">
-      <div class="card"><span class="num">01</span><h3>Plan before apply</h3><p><code>devbox</code> with no arguments is <code>plan</code>. It prints the exact command for every change, and with <code>--dry-run</code> the tests assert that nothing on the machine moved.</p></div>
-      <div class="card"><span class="num">02</span><h3>Idempotent steps</h3><p>Every step has a check. Apply runs only unsatisfied steps, then re-checks. The second run is a no-op, for every bundled profile.</p></div>
-      <div class="card"><span class="num">03</span><h3>Managed blocks</h3><p>Shell config edits live between begin and end markers and are replaced in place, never appended twice. Your own lines are left alone.</p></div>
-      <div class="card"><span class="num">04</span><h3>Backups and a log</h3><p>Files are copied to <code>~/.devbox/backups/</code> before they change, macOS defaults get a restore script, and every run appends to a log.</p></div>
-    </div>
+    <ol class="rules" role="list">
+      <li><span class="num" aria-hidden="true">01</span><h3>Plan before apply</h3><p><code>devbox</code> with no arguments is <code>plan</code>. It prints the exact command for every change, and with <code>--dry-run</code> the tests assert that nothing on the machine moved.</p></li>
+      <li><span class="num" aria-hidden="true">02</span><h3>Idempotent steps</h3><p>Every step has a check. Apply runs only unsatisfied steps, then re-checks. The second run is a no-op, for every bundled profile.</p></li>
+      <li><span class="num" aria-hidden="true">03</span><h3>Managed blocks</h3><p>Shell config edits live between begin and end markers and are replaced in place, never appended twice. Your own lines are left alone.</p></li>
+      <li><span class="num" aria-hidden="true">04</span><h3>Backups and a log</h3><p>Files are copied to <code>~/.devbox/backups/</code> before they change, macOS defaults get a restore script, and every run appends to a log.</p></li>
+    </ol>
   </div>
 </section>
 
@@ -224,7 +264,7 @@ HTML
         <p>This is the dotfile from the sandbox after one apply, with three lines of the user's own above the block.</p>
       </div>
       <div>
-        <pre class="code" tabindex="0" aria-label="Contents of .zprofile after apply"><code>$(ansi_html "$tmp/ansi/block.ansi")</code></pre>
+        <pre class="code scroll-x" tabindex="0" role="region" aria-label="Contents of .zprofile after apply"><code>$(ansi_html "$tmp/ansi/block.ansi")</code></pre>
       </div>
     </div>
   </div>
@@ -233,10 +273,8 @@ HTML
 <section>
   <div class="wrap">
     <h2>Profiles</h2>
-    <p class="section-lede">Each profile is a manifest in <code>profiles/</code>. They can include each other. These cards, and every page behind them, are generated from the manifests.</p>
-    <div class="grid three">
-$(profile_cards "profiles/")
-    </div>
+    <p class="section-lede">Each profile is a manifest in <code>profiles/</code>. They can include each other. This table, and every page behind it, is generated from the manifests. Steps counts everything a profile resolves to, included profiles too.</p>
+$(profile_table "profiles/")
   </div>
 </section>
 
@@ -254,35 +292,8 @@ $(profile_cards "profiles/")
   </div>
 </section>
 
-<script>
-(function () {
-  var root = document.documentElement;
-  root.classList.add('js');
-  var tabs = Array.prototype.slice.call(document.querySelectorAll('.t-tab'));
-  function show(tab) {
-    tabs.forEach(function (t) {
-      var on = t === tab;
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.tabIndex = on ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
-    });
-  }
-  tabs.forEach(function (t, i) {
-    t.addEventListener('click', function () { show(t); });
-    t.addEventListener('keydown', function (e) {
-      var j = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
-      if (j < 0) return;
-      e.preventDefault();
-      j = (j + tabs.length) % tabs.length;
-      show(tabs[j]);
-      tabs[j].focus();
-    });
-  });
-  show(tabs[0]);
-})();
-</script>
 HTML
-  page_end
+  page_end ""
 } >"$site/index.html"
 
 # ---- 5. profile index and pages -----------------------------------------------------------------
@@ -296,12 +307,12 @@ HTML
     <h1>Profiles</h1>
     <p class="lede">${#names[@]} bundled profiles. Pick one or several: <code>devbox plan --profile php-laravel,python</code>. Your own profiles in <code>~/.devbox/profiles/</code> appear in <code>devbox profiles</code> too; <a href="../guide.html">here is how to write one</a>.</p>
   </div>
-  <div class="grid three" style="padding-bottom:64px">
-$(profile_cards "")
+  <div style="padding-bottom:64px">
+$(profile_table "")
   </div>
 </div>
 HTML
-  page_end
+  page_end "../"
 } >"$site/profiles/index.html"
 
 option_cell() { # REC -> human readable options
@@ -345,14 +356,14 @@ HTML
       printf '    <p style="margin-top:16px"><span class="label">Includes</span><br>%s</p>\n' "$incl_html"
     fi
     cat <<HTML
-    <p style="margin-top:24px"><span class="label">Use it</span></p>
-    <div class="install" tabindex="0" role="region" aria-label="Commands">devbox plan --profile $(esc "$n") &amp;&amp; devbox apply --profile $(esc "$n") &amp;&amp; devbox doctor --profile $(esc "$n")</div>
+    <p class="label" style="margin-top:24px">Use it</p>
+    $(cmd_block "Commands for $(esc "$n")" "devbox plan --profile $(esc "$n") &amp;&amp; devbox apply --profile $(esc "$n") &amp;&amp; devbox doctor --profile $(esc "$n")")
   </div>
 
   <section style="padding-top:32px">
     <h2>Steps</h2>
     <p class="section-lede">In the order devbox runs them. Included profiles come first.</p>
-    <div class="table-wrap" tabindex="0" role="region" aria-label="Steps of $(esc "$n")">
+    <div class="table-wrap scroll-x" tabindex="0" role="region" aria-label="Steps of $(esc "$n")">
       <table>
         <thead><tr><th>Kind</th><th>Id</th><th>From</th><th>Details</th><th>Why</th></tr></thead>
         <tbody>
@@ -372,19 +383,19 @@ HTML
       <div>
         <h2>Manifest</h2>
         <p class="label">profiles/$(esc "$n").conf</p>
-        <pre class="code" tabindex="0"><code>$(esc "$(cat "$path")")</code></pre>
+        <pre class="code scroll-x" tabindex="0" role="region" aria-label="Manifest profiles/$(esc "$n").conf"><code>$(esc "$(cat "$path")")</code></pre>
       </div>
       <div>
         <h2>Brewfile</h2>
         <p class="label">Brewfiles/$(esc "$n").Brewfile (generated)</p>
-        <pre class="code" tabindex="0"><code>$(esc "$(cat "$root/Brewfiles/$n.Brewfile")")</code></pre>
+        <pre class="code scroll-x" tabindex="0" role="region" aria-label="Brewfile for $(esc "$n")"><code>$(esc "$(cat "$root/Brewfiles/$n.Brewfile")")</code></pre>
         <p class="section-lede" style="margin-top:12px">For people who want a plain Brewfile. Only formulae, casks and VS Code extensions have a Brewfile form; the rest need <code>devbox apply</code>.</p>
       </div>
     </div>
   </section>
 </div>
 HTML
-    page_end
+    page_end "../"
   } >"$site/profiles/$n.html"
 done
 
@@ -410,7 +421,7 @@ done
     <p>So a team can keep its profiles in a git repo, point <code>DEVBOX_PROFILE_PATH</code> at a checkout, and even override a bundled profile by reusing its name.</p>
 
     <h2>A first profile</h2>
-<pre class="code" tabindex="0"><code>$(esc '# ~/.devbox/profiles/team-web.conf
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="Example profile team-web.conf"><code>$(esc '# ~/.devbox/profiles/team-web.conf
 summary: "What our web team installs"
 include: base node
 
@@ -420,7 +431,7 @@ cask    docker bin=docker
 block   team-env file="~/.zshrc" line="export COMPOSE_PROJECT_NAME=web"
 cmd     clone-monorepo run="git clone git@github.com:example/web.git ~/code/web" check="test -d ~/code/web/.git"')</code></pre>
     <p>Then:</p>
-<pre class="code" tabindex="0"><code>devbox plan --profile team-web      # what would change, and the exact commands
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="Commands for team-web"><code>devbox plan --profile team-web      # what would change, and the exact commands
 devbox apply --profile team-web     # make it so (asks first)
 devbox doctor --profile team-web    # what has drifted since</code></pre>
 
@@ -430,7 +441,7 @@ devbox doctor --profile team-web    # what has drifted since</code></pre>
 
     <h2>Step kinds</h2>
   </div>
-  <div class="table-wrap" tabindex="0" role="region" aria-label="Step kinds" style="margin-bottom:64px">
+  <div class="table-wrap scroll-x" tabindex="0" role="region" aria-label="Step kinds" style="margin-bottom:64px">
     <table>
       <thead><tr><th>Kind</th><th>Required</th><th>Optional</th><th>What it does</th></tr></thead>
       <tbody>
@@ -462,7 +473,7 @@ HTML
 
     <h2>Managed blocks</h2>
     <p>A <code>block</code> step owns this region of the file, and nothing else in it:</p>
-<pre class="code" tabindex="0"><code>$(esc '# >>> devbox:team-env >>> managed by devbox; edits between the markers are overwritten
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="A managed block in a dotfile"><code>$(esc '# >>> devbox:team-env >>> managed by devbox; edits between the markers are overwritten
 export COMPOSE_PROJECT_NAME=web
 # <<< devbox:team-env <<<')</code></pre>
     <p>If the block is missing, apply appends it once. If its content differs from the profile, apply replaces it in place. If the markers are unbalanced or duplicated, devbox marks the step blocked and changes nothing. Before any file changes, the original is copied to <code>~/.devbox/backups/&lt;time&gt;/files/</code>.</p>
@@ -475,7 +486,7 @@ export COMPOSE_PROJECT_NAME=web
     </ol>
 
     <h2>Exit codes</h2>
-    <div class="table-wrap" style="margin-top:16px"><table>
+    <div class="table-wrap scroll-x" tabindex="0" role="region" aria-label="Exit codes" style="margin-top:16px"><table>
       <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
       <tbody>
         <tr><td class="mono">0</td><td>Success. For doctor: no failures (warnings allowed).</td></tr>
@@ -488,7 +499,7 @@ export COMPOSE_PROJECT_NAME=web
   </div>
 </div>
 HTML
-  page_end
+  page_end ""
 } >"$site/guide.html"
 
 echo "docs built in $site"
