@@ -8,6 +8,7 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="../assets/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="../assets/style.css">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -28,55 +29,74 @@
     <h1>Profiles</h1>
     <p class="lede">8 bundled profiles. Pick one or several: <code>devbox plan --profile php-laravel,python</code>. Your own profiles in <code>~/.devbox/profiles/</code> appear in <code>devbox profiles</code> too; <a href="../guide.html">here is how to write one</a>.</p>
   </div>
-  <div class="grid three" style="padding-bottom:64px">
-      <a class="card" href="base.html">
-        <h3><span>base</span></h3>
-        <p>Core command-line tools: git, gh, jq, ripgrep, fd, fzf, bat, shellcheck, tmux</p>
-        <p class="meta">10 steps</p>
-      </a>
-      <a class="card" href="data.html">
-        <h3><span>data</span></h3>
-        <p>SQLite and DuckDB for quick data work</p>
-        <p class="meta">includes base · 12 steps</p>
-      </a>
-      <a class="card" href="editor.html">
-        <h3><span>editor</span></h3>
-        <p>Visual Studio Code with a curated extension list</p>
-        <p class="meta">8 steps</p>
-      </a>
-      <a class="card" href="macos-defaults.html">
-        <h3><span>macos-defaults</span></h3>
-        <p>Curated, reversible macOS preferences (Finder, Dock, keyboard, text)</p>
-        <p class="meta">11 steps</p>
-      </a>
-      <a class="card" href="node.html">
-        <h3><span>node</span></h3>
-        <p>Node.js via fnm, tracking the current LTS</p>
-        <p class="meta">includes base · 13 steps</p>
-      </a>
-      <a class="card" href="php-laravel.html">
-        <h3><span>php-laravel</span></h3>
-        <p>PHP, Composer, MySQL and Laravel Valet</p>
-        <p class="meta">includes base · 22 steps</p>
-      </a>
-      <a class="card" href="python.html">
-        <h3><span>python</span></h3>
-        <p>Python managed by uv, with pinned interpreters</p>
-        <p class="meta">includes base · 13 steps</p>
-      </a>
-      <a class="card" href="salesforce.html">
-        <h3><span>salesforce</span></h3>
-        <p>Salesforce CLI (sf) on a managed Node LTS, with helper aliases</p>
-        <p class="meta">includes node · 16 steps</p>
-      </a>
+  <div style="padding-bottom:64px">
+      <table class="profiles" role="table">
+        <caption class="sr-only">Bundled devbox profiles: what each is, what it includes, and how many steps it resolves to</caption>
+        <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">Profile</th><th scope="col" role="columnheader">What it is</th><th scope="col" role="columnheader">Includes</th><th scope="col" role="columnheader" class="steps">Steps</th></tr></thead>
+        <tbody role="rowgroup">
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="base.html">base<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Core command-line tools: git, gh, jq, ripgrep, fd, fzf, bat, shellcheck, tmux</td>
+            <td class="inc none" role="cell"><span class="muted">none</span></td>
+            <td class="steps" role="cell">10</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="data.html">data<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">SQLite and DuckDB for quick data work</td>
+            <td class="inc" role="cell"><a href="base.html">base</a></td>
+            <td class="steps" role="cell">12</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="editor.html">editor<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Visual Studio Code with a curated extension list</td>
+            <td class="inc none" role="cell"><span class="muted">none</span></td>
+            <td class="steps" role="cell">8</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="macos-defaults.html">macos-defaults<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Curated, reversible macOS preferences (Finder, Dock, keyboard, text)</td>
+            <td class="inc none" role="cell"><span class="muted">none</span></td>
+            <td class="steps" role="cell">11</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="node.html">node<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Node.js via fnm, tracking the current LTS</td>
+            <td class="inc" role="cell"><a href="base.html">base</a></td>
+            <td class="steps" role="cell">13</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="php-laravel.html">php-laravel<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">PHP, Composer, MySQL and Laravel Valet</td>
+            <td class="inc" role="cell"><a href="base.html">base</a></td>
+            <td class="steps" role="cell">22</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="python.html">python<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Python managed by uv, with pinned interpreters</td>
+            <td class="inc" role="cell"><a href="base.html">base</a></td>
+            <td class="steps" role="cell">13</td>
+          </tr>
+          <tr role="row">
+            <th scope="row" role="rowheader"><a class="pname" href="salesforce.html">salesforce<span class="sr-only"> profile</span></a></th>
+            <td class="sum" role="cell">Salesforce CLI (sf) on a managed Node LTS, with helper aliases</td>
+            <td class="inc" role="cell"><a href="node.html">node</a></td>
+            <td class="steps" role="cell">16</td>
+          </tr>
+        </tbody>
+      </table>
   </div>
 </div>
 </main>
 <footer>
   <div class="wrap">
-    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
-    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+    <p>MIT licensed. A portfolio build, exercised against a mocked machine only.</p>
+    <ul aria-label="Elsewhere">
+      <li><a href="https://victor-wambua.github.io/victor-portfolio/">Victor Wambua's portfolio</a></li>
+      <li><a href="https://github.com/Victor-Wambua/case-studies">Case studies</a></li>
+      <li><a href="https://github.com/Victor-Wambua/devbox-bootstrap">Source on GitHub</a></li>
+    </ul>
   </div>
 </footer>
+<script src="../assets/site.js" defer></script>
 </body>
 </html>

@@ -8,6 +8,7 @@
 <meta name="color-scheme" content="light dark">
 <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/style.css">
+<script>document.documentElement.className = "js";</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -39,7 +40,7 @@
     <p>So a team can keep its profiles in a git repo, point <code>DEVBOX_PROFILE_PATH</code> at a checkout, and even override a bundled profile by reusing its name.</p>
 
     <h2>A first profile</h2>
-<pre class="code" tabindex="0"><code># ~/.devbox/profiles/team-web.conf
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="Example profile team-web.conf"><code># ~/.devbox/profiles/team-web.conf
 summary: &quot;What our web team installs&quot;
 include: base node
 
@@ -49,7 +50,7 @@ cask    docker bin=docker
 block   team-env file=&quot;~/.zshrc&quot; line=&quot;export COMPOSE_PROJECT_NAME=web&quot;
 cmd     clone-monorepo run=&quot;git clone git@github.com:example/web.git ~/code/web&quot; check=&quot;test -d ~/code/web/.git&quot;</code></pre>
     <p>Then:</p>
-<pre class="code" tabindex="0"><code>devbox plan --profile team-web      # what would change, and the exact commands
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="Commands for team-web"><code>devbox plan --profile team-web      # what would change, and the exact commands
 devbox apply --profile team-web     # make it so (asks first)
 devbox doctor --profile team-web    # what has drifted since</code></pre>
 
@@ -59,7 +60,7 @@ devbox doctor --profile team-web    # what has drifted since</code></pre>
 
     <h2>Step kinds</h2>
   </div>
-  <div class="table-wrap" tabindex="0" role="region" aria-label="Step kinds" style="margin-bottom:64px">
+  <div class="table-wrap scroll-x" tabindex="0" role="region" aria-label="Step kinds" style="margin-bottom:64px">
     <table>
       <thead><tr><th>Kind</th><th>Required</th><th>Optional</th><th>What it does</th></tr></thead>
       <tbody>
@@ -88,7 +89,7 @@ devbox doctor --profile team-web    # what has drifted since</code></pre>
 
     <h2>Managed blocks</h2>
     <p>A <code>block</code> step owns this region of the file, and nothing else in it:</p>
-<pre class="code" tabindex="0"><code># &gt;&gt;&gt; devbox:team-env &gt;&gt;&gt; managed by devbox; edits between the markers are overwritten
+<pre class="code scroll-x" tabindex="0" role="region" aria-label="A managed block in a dotfile"><code># &gt;&gt;&gt; devbox:team-env &gt;&gt;&gt; managed by devbox; edits between the markers are overwritten
 export COMPOSE_PROJECT_NAME=web
 # &lt;&lt;&lt; devbox:team-env &lt;&lt;&lt;</code></pre>
     <p>If the block is missing, apply appends it once. If its content differs from the profile, apply replaces it in place. If the markers are unbalanced or duplicated, devbox marks the step blocked and changes nothing. Before any file changes, the original is copied to <code>~/.devbox/backups/&lt;time&gt;/files/</code>.</p>
@@ -101,7 +102,7 @@ export COMPOSE_PROJECT_NAME=web
     </ol>
 
     <h2>Exit codes</h2>
-    <div class="table-wrap" style="margin-top:16px"><table>
+    <div class="table-wrap scroll-x" tabindex="0" role="region" aria-label="Exit codes" style="margin-top:16px"><table>
       <thead><tr><th>Code</th><th>Meaning</th></tr></thead>
       <tbody>
         <tr><td class="mono">0</td><td>Success. For doctor: no failures (warnings allowed).</td></tr>
@@ -116,9 +117,14 @@ export COMPOSE_PROJECT_NAME=web
 </main>
 <footer>
   <div class="wrap">
-    <span>Built by Victor Wambua · <a href="https://victor-wambua.github.io/victor-portfolio/">portfolio</a> · <a href="https://github.com/Victor-Wambua/case-studies">case studies</a></span>
-    <span>MIT licensed · <a href="https://github.com/Victor-Wambua/devbox-bootstrap">source</a> · portfolio build, exercised against a mocked machine only</span>
+    <p>MIT licensed. A portfolio build, exercised against a mocked machine only.</p>
+    <ul aria-label="Elsewhere">
+      <li><a href="https://victor-wambua.github.io/victor-portfolio/">Victor Wambua's portfolio</a></li>
+      <li><a href="https://github.com/Victor-Wambua/case-studies">Case studies</a></li>
+      <li><a href="https://github.com/Victor-Wambua/devbox-bootstrap">Source on GitHub</a></li>
+    </ul>
   </div>
 </footer>
+<script src="assets/site.js" defer></script>
 </body>
 </html>
